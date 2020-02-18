@@ -1,2 +1,3 @@
-# planning_poker_back-end
-Planning Poker (back-end)
+# Planning Poker (back-end)
+
+Let's play all together

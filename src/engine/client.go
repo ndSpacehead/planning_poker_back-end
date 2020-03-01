@@ -57,6 +57,7 @@ func (c *Client) Done() {
 	c.doneCh <- true
 }
 
+// Listen write and read events
 func (c *Client) Listen() {
 	go c.listenWrite()
 	c.listenRead()

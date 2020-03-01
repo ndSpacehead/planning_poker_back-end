@@ -9,13 +9,14 @@ import (
 
 // Server App server
 type Server struct {
-	pattern  string
-	messages []*Message
-	clients  map[int]*Client
-	addCh    chan *Client
-	delCh    chan *Client
-	doneCh   chan bool
-	errCh    chan error
+	pattern   string
+	messages  []*Message
+	clients   map[int]*Client
+	addCh     chan *Client
+	delCh     chan *Client
+	sendAllCh chan *Message
+	doneCh    chan bool
+	errCh     chan error
 }
 
 // NewServer  Create new app server
@@ -24,6 +25,7 @@ func NewServer(pattern string) *Server {
 	clients := make(map[int]*Client)
 	addCh := make(chan *Client)
 	delCh := make(chan *Client)
+	sendAllCh := make(chan *Message)
 	doneCh := make(chan bool)
 	errCh := make(chan error)
 
@@ -33,6 +35,7 @@ func NewServer(pattern string) *Server {
 		clients,
 		addCh,
 		delCh,
+		sendAllCh,
 		doneCh,
 		errCh,
 	}

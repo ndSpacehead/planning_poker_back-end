@@ -1,9 +1,12 @@
 package engine
 
+// Message model
 type Message struct {
-	body string `json:"body"`
+	Author string `json:"author"`
+	Body   string `json:"body"`
 }
 
+// String – model to string
 func (m *Message) String() string {
-	return m.body
+	return m.Author + " says: " + m.Body
 }

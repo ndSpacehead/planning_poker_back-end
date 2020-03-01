@@ -57,6 +57,7 @@ func (c *Client) Done() {
 	c.doneCh <- true
 }
 
+// Listen write and read events
 func (c *Client) Listen() {
 	go c.listenWrite()
 	c.listenRead()
@@ -97,7 +98,7 @@ func (c *Client) listenRead() {
 			} else if err != nil {
 				c.server.Err(err)
 			} else {
-				// Send message all clients
+				c.server.SendAll(&msg)
 			}
 		}
 	}

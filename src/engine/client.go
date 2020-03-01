@@ -69,7 +69,7 @@ func (c *Client) listenWrite() {
 		select {
 		// Send message to the client
 		case msg := <-c.messageCh:
-			log.Printf("Client %d send: %s", c.id, msg)
+			log.Printf("To client %d send: %s", c.id, msg)
 			websocket.JSON.Send(c.ws, msg)
 		// Recieve donw request
 		case <-c.doneCh:

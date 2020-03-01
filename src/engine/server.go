@@ -51,13 +51,33 @@ func (s *Server) Del(c *Client) {
 	s.delCh <- c
 }
 
+// SendAll – message to channel
+func (s *Server) SendAll(msg *Message) {
+	s.sendAllCh <- msg
+}
+
 // Done with servers work
 func (s *Server) Done() {
 	s.doneCh <- true
 }
 
+// Err – an error happened
 func (s *Server) Err(err error) {
 	s.errCh <- err
+}
+
+// Broadcast send messages
+func (s *Server) sendAll(msg *Message) {
+	for _, c := range s.clients {
+		c.Write(msg)
+	}
+}
+
+// Shows message history to user
+func (s *Server) sendPastMessagees(c *Client) {
+	for _, msg := range s.messages {
+		c.Write(msg)
+	}
 }
 
 // Listen and serve.
@@ -88,12 +108,20 @@ func (s *Server) Listen() {
 			log.Println("Added new player")
 			s.clients[c.id] = c
 			log.Println("Now", len(s.clients), "players connected.")
+			s.sendPastMessagees(c)
 		// Delete a player
 		case c := <-s.delCh:
 			log.Println("Delete a player")
 			delete(s.clients, c.id)
+		// Broadcast send messages for all clients
+		case msg := <-s.sendAllCh:
+			log.Println("Send to all:", msg)
+			s.messages = append(s.messages, msg)
+			s.sendAll(msg)
+		// Catched an error
 		case err := <-s.errCh:
 			log.Println("Error:", err.Error())
+		// Shut down server
 		case <-s.doneCh:
 			return
 		}

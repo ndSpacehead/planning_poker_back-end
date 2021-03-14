@@ -12,6 +12,7 @@ type Server struct {
 	pattern   string
 	messages  []*Message
 	clients   map[int]*Client
+	players   map[*Client]*Player
 	addCh     chan *Client
 	delCh     chan *Client
 	sendAllCh chan *Message
@@ -23,6 +24,7 @@ type Server struct {
 func NewServer(pattern string) *Server {
 	messages := []*Message{}
 	clients := make(map[int]*Client)
+	players := make(map[*Client]*Player)
 	addCh := make(chan *Client)
 	delCh := make(chan *Client)
 	sendAllCh := make(chan *Message)
@@ -33,6 +35,7 @@ func NewServer(pattern string) *Server {
 		pattern,
 		messages,
 		clients,
+		players,
 		addCh,
 		delCh,
 		sendAllCh,
@@ -64,6 +67,16 @@ func (s *Server) Done() {
 // Err – an error happened
 func (s *Server) Err(err error) {
 	s.errCh <- err
+}
+
+func (s *Server) PlayerOfClient(c *Client) *Player {
+	if player, ok := s.players[c]; ok {
+		return player
+	}
+
+	player := NewPlayer(*c)
+	s.players[c] = player
+	return player
 }
 
 // Broadcast send messages
